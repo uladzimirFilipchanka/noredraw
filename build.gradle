@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.0.4'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'com.example'
+version = '0.0.1'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    implementation 'org.hamcrest:hamcrest:2.2'
+
+    // GitHub Actions provider
+    implementation 'org.yaml:snakeyaml:2.2'
+
+    // Terraform provider
+    implementation "com.bertramlabs.plugins:hcl4j:0.9.1"
+
+    // visualization
+    implementation 'com.structurizr:structurizr-client:2.0.0'
+    implementation 'com.structurizr:structurizr-export:2.0.0'
+
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+// this will override ${} placeholders in build.properties file based on Gradle project's properties
+//processResources {
+//	filesMatching("build.properties") {
+//		expand(project.properties)
+//	}
+//}
+
+jar {
+    enabled = false
+}
