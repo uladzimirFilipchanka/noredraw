@@ -1,0 +1,16 @@
+
+dependencies {
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+
+    // GitHub Actions provider
+    implementation 'org.yaml:snakeyaml:2.2'
+
+    // Terraform provider
+    implementation "com.bertramlabs.plugins:hcl4j:0.9.1"
+
+    // AmazonECS provider
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
+
+    implementation project(":core")
+}
+

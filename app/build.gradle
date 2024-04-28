@@ -1,0 +1,22 @@
+dependencies {
+    implementation 'org.reflections:reflections:0.10.2'
+    implementation 'org.jcommander:jcommander:1.83'
+
+    implementation project(':core')
+    implementation project(':export')
+    implementation project(':providers')
+
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'creator.AppRunner'
+        )
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
