@@ -1,7 +1,6 @@
 package creator.core.provider;
 
-import creator.core.resource.Relic;
-import creator.core.resource.Resource;
+import creator.core.model.Relic;
 
 import java.nio.file.Path;
 import java.util.Collection;

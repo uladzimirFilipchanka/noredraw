@@ -14,15 +14,10 @@ subprojects {
         annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
         implementation 'org.apache.commons:commons-lang3:3.14.0'
-//        implementation 'ch.qos.logback:logback-core:1.4.14'
-        implementation 'ch.qos.logback:logback-classic:1.4.14'
-        implementation 'org.slf4j:log4j-over-slf4j:1.7.29'
         implementation 'org.slf4j:slf4j-api:1.7.25'
-//        implementation 'org.slf4j:slf4j-simple:1.7.28'
     }
 
     tasks.named('test') {
         useJUnitPlatform()
     }
-
 }

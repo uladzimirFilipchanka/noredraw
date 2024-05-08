@@ -3,10 +3,11 @@ package creator.providers.aws;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import creator.core.annotation.Named;
+import creator.core.model.Relic;
+import creator.core.model.matcher.Matchers;
+import creator.core.model.source.SimpleSource;
 import creator.core.provider.Provider;
-import creator.core.resource.Relic;
-import creator.core.resource.SimpleSource;
-import creator.core.resource.matcher.Matchers;
 import creator.providers.FilePredicates;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,6 +19,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Named("AWS_ECS")
 @Slf4j
 public class AmazonECSProvider implements Provider {
     private final ObjectMapper mapper = new ObjectMapper()
@@ -55,9 +57,8 @@ public class AmazonECSProvider implements Provider {
 
         builder.definition("image", imageName);
         builder.definition("family", taskDefinition.getFamily());
-//        builder.definition("pathToFile", taskDefinition.getPathToTask().toString());
         builder.name(taskDefinition.getFamily());
-        builder.matcher(Matchers.equalTo(imageName)
+        builder.matcher(Matchers.equalsTo(imageName)
                 .relationship("assigns")
                 .build());
         return builder.build();

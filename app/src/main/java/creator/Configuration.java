@@ -1,5 +1,7 @@
 package creator;
 
+import creator.args.CliArgs;
+
 public class Configuration {
     private static CliArgs args;
 

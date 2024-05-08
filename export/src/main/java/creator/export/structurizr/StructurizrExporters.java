@@ -1,18 +1,30 @@
 package creator.export.structurizr;
 
-import com.structurizr.export.DiagramExporter;
+import com.structurizr.export.dot.DOTExporter;
+import com.structurizr.export.mermaid.MermaidDiagramExporter;
 import com.structurizr.export.plantuml.StructurizrPlantUMLExporter;
+import creator.core.annotation.Named;
 
-public enum StructurizrExporters {
-    PLANT_UML(new StructurizrPlantUMLExporter());
+public class StructurizrExporters {
 
-    private final DiagramExporter exporter;
-
-    StructurizrExporters(DiagramExporter exporter) {
-        this.exporter = exporter;
+    @Named("PLANT_UML")
+    public static class PlantUmlStructurizrExporter extends StructurizrBasedExporter {
+        public PlantUmlStructurizrExporter() {
+            super(new StructurizrPlantUMLExporter());
+        }
     }
 
-    public DiagramExporter getExporter() {
-        return exporter;
+    @Named("MERMAID")
+    public static class MermaidStructurizrExporter extends StructurizrBasedExporter {
+        public MermaidStructurizrExporter() {
+            super(new MermaidDiagramExporter());
+        }
+    }
+
+    @Named("DOT")
+    public static class DotStructurizrExporter extends StructurizrBasedExporter {
+        public DotStructurizrExporter() {
+            super(new DOTExporter());
+        }
     }
 }

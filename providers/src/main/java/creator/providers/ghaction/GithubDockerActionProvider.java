@@ -1,9 +1,10 @@
 package creator.providers.ghaction;
 
+import creator.core.annotation.Named;
+import creator.core.model.Relic;
+import creator.core.model.matcher.Matchers;
+import creator.core.model.source.SimpleSource;
 import creator.core.provider.Provider;
-import creator.core.resource.Relic;
-import creator.core.resource.SimpleSource;
-import creator.core.resource.matcher.Matchers;
 import creator.providers.FilePredicates;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +19,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static creator.ProcessingContext.processingContext;
+
+@Named("GITHUB_DOCKER_ACTION")
 @Slf4j
 public class GithubDockerActionProvider implements Provider {
     // TODO: think about feature flags
@@ -70,13 +74,13 @@ public class GithubDockerActionProvider implements Provider {
                             pathToDockerfile = with.get("context") + "/Dockerfile";
                         }
                         Path normalizedPath = Path.of(pathToDockerfile).normalize();
-                        if (!Files.exists(normalizedPath)) {
+                        if (!Files.exists(processingContext().getSourcePath().resolve(Path.of(pathToDockerfile)))) {
                             log.warn("Can't locate path to Dockerfile {} in repo", pathToDockerfile);
                         }
                         String path = normalizedPath.toString();
                         builder.name(buildName(tags));
                         builder.definition("path", path);
-                        builder.matcher(Matchers.equalTo(path)
+                        builder.matcher(Matchers.equalsTo(path)
                                 .relationship("creates")
                                 .build());
                     });

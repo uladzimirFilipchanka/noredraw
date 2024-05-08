@@ -2,10 +2,11 @@ package creator.providers.terraform.aws;
 
 import com.bertramlabs.plugins.hcl4j.HCLParser;
 import com.bertramlabs.plugins.hcl4j.HCLParserException;
+import creator.core.annotation.Named;
+import creator.core.model.Relic;
+import creator.core.model.matcher.Matchers;
+import creator.core.model.source.SimpleSource;
 import creator.core.provider.Provider;
-import creator.core.resource.Relic;
-import creator.core.resource.SimpleSource;
-import creator.core.resource.matcher.Matchers;
 import creator.providers.FilePredicates;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -20,6 +21,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Named("TERRAFORM_AWS")
 @Slf4j
 public class TerraformAWSProvider implements Provider {
     @Override
@@ -56,7 +58,7 @@ public class TerraformAWSProvider implements Provider {
                 .map(ecs -> (String) ecs.get("name"))
                 .map(name -> builder
                         .name(name)
-                        .matcher(Matchers.equalTo(name).relationship("deploys").build())
+                        .matcher(Matchers.equalsTo(name).relationship("deploys").build())
                         .build());
     }
 

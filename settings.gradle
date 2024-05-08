@@ -2,5 +2,6 @@ rootProject.name = 'arch-diagram-creator'
 
 include 'core'
 include 'export'
+include 'loader'
 include 'app'
 include 'providers'

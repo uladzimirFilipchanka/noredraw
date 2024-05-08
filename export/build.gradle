@@ -1,11 +1,8 @@
 dependencies {
-//    implementation 'org.apache.commons:commons-lang3:3.14.0'
-
-//    compileOnly 'org.projectlombok:lombok:1.18.22'
-//    annotationProcessor 'org.projectlombok:lombok:1.18.22'
-
     implementation 'com.structurizr:structurizr-client:2.0.0'
     implementation 'com.structurizr:structurizr-export:2.0.0'
+
+    implementation 'net.sourceforge.plantuml:plantuml:1.2024.4'
 
     implementation project(":core")
 }

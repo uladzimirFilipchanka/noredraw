@@ -1,9 +1,10 @@
 package creator.providers.docker;
 
+import creator.core.annotation.Named;
+import creator.core.model.Relic;
+import creator.core.model.matcher.FunMatcher;
+import creator.core.model.source.SimpleSource;
 import creator.core.provider.Provider;
-import creator.core.resource.Relic;
-import creator.core.resource.SimpleSource;
-import creator.core.resource.matcher.FunMatcher;
 import creator.providers.FilePredicates;
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,7 +18,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static creator.ProcessingContext.processingContext;
 
+@Named("DOCKER")
 public class DockerProvider implements Provider {
     Map<Predicate<String>, BiConsumer<String, Relic.RelicBuilder>> lineMapper = Map.of(
             line -> line.startsWith("FROM"), (line, relic) ->
@@ -58,7 +61,7 @@ public class DockerProvider implements Provider {
             throw new RuntimeException(e);
         }
 
-        builder.definition("path", file.toString());
+        builder.definition("path", processingContext().getSourcePath().relativize(file).toString());
         builder.type("Dockerfile");
         builder.name(file.getFileName().toString());
 

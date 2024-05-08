@@ -1,6 +1,7 @@
 package creator;
 
 import com.beust.jcommander.JCommander;
+import creator.args.CliArgs;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -17,6 +18,5 @@ public class AppRunner {
 
         StarterService service = new StarterService();
         service.start();
-
     }
 }

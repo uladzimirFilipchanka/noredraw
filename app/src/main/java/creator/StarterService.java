@@ -1,89 +1,66 @@
 package creator;
 
-import creator.core.incoming.LocalSourceCodeProviderImpl;
 import creator.core.incoming.SourceCodeProvider;
-import creator.core.matching.match.MatchingService;
-import creator.core.matching.match.SimpleMatchingService;
-import creator.core.matching.merge.MergingService;
-import creator.core.matching.merge.StrategyBasedMergingServiceImpl;
-import creator.core.matching.model.Graph;
+import creator.core.link.GraphService;
+import creator.core.link.StrategyBasedGraphService;
+import creator.core.merge.MergingService;
+import creator.core.merge.StrategyBasedMergingService;
+import creator.core.model.Relic;
+import creator.core.model.graph.Graph;
 import creator.core.provider.Provider;
-import creator.core.resource.Relic;
-import creator.export.Diagram;
 import creator.export.Exporter;
+import creator.export.model.Diagram;
+import creator.loader.SourceCodeProviderFactory;
+import creator.utils.NamedClassUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
+import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static creator.Configuration.config;
 
 @Slf4j
 public class StarterService {
-    private final Set<Provider> registry;
+    private final Map<String, Provider> registry;
+    private final SourceCodeProviderFactory sourceCodeProviderFactory;
 
     public StarterService() {
-        ConfigurationBuilder config = new ConfigurationBuilder().addUrls(ClasspathHelper.forJavaClassPath())
-                .addScanners(Scanners.SubTypes);
+        sourceCodeProviderFactory = new SourceCodeProviderFactory();
 
-        registry = new Reflections(config)
-                .getSubTypesOf(Provider.class).stream()
-                .map(this::createInstance)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-
-        log.info("Found {} providers", registry.size());
-    }
-
-    private Provider createInstance(Class<? extends Provider> clazz) {
-        try {
-            Constructor<? extends Provider> constructor = clazz.getConstructor();
-            return constructor.newInstance();
-        } catch (NoSuchMethodException e) {
-            log.error("Can't find default constructor for class {}. Skipping.", clazz);
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            log.error("Can't instantiate class {}. Skipping.", clazz, e);
-        }
-        return null;
+        registry = NamedClassUtils.findNamedClassesOf(Provider.class);
+        log.info("Found {} providers: {}", registry.size(), registry.keySet());
     }
 
     public void start() {
-        SourceCodeProvider sources = new LocalSourceCodeProviderImpl();
-        Path path = sources.provideSourceCode(config().getSource());
-        log.info("File exist {}, Loading repo from {}", Files.exists(path), path.getFileName().toAbsolutePath());
+        SourceCodeProvider sourceCodeProvider = sourceCodeProviderFactory.createProvider(config().getSource());
+        Path path = sourceCodeProvider.provideSourceCode();
 
-        List<Relic> resources = registry.stream()
+        ProcessingContext.initialize(path);
+
+        List<Relic> resources = registry.values().stream()
                 .map(provider -> processProvider(provider, path))
                 .flatMap(Collection::stream)
                 .toList();
         log.info("Next resources gathered {}", resources);
 
-        MergingService mergingService = new StrategyBasedMergingServiceImpl(config().getMergeStrategy());
+        MergingService mergingService = new StrategyBasedMergingService(config().getMergeStrategy());
         List<Relic> mergedResources = mergingService.merge(resources);
 
-        MatchingService matchingService = new SimpleMatchingService();
-        Graph<Relic> graph = matchingService.match(mergedResources);
-
-        log.info("Resource graph looks like \n{}", graph);
+        GraphService matchingService = new StrategyBasedGraphService(config().getLinkStrategy());
+        Graph<Relic> graph = matchingService.buildGraph(mergedResources);
 
         Exporter exporter = config().getExporter();
-        Diagram diagram = exporter.export(graph);
+        Diagram diagram = exporter.export(graph, getTitle());
 
         String output = config().getOutput();
-        output = output.contains(File.separator) ? output : config().getSource() + File.separator + output;
+        output = output.replaceFirst("^~", System.getProperty("user.home"));
         try (FileOutputStream outputStream = new FileOutputStream(output)) {
             outputStream.write(diagram.getData());
             log.info("Diagram serialized successfully into {}", output);
@@ -92,18 +69,33 @@ public class StarterService {
         }
     }
 
-    private static Collection<Relic> processProvider(Provider provider, Path path) {
+    private String getTitle() {
+        return config().getTitle() != null ?
+                config().getTitle() :
+                StringUtils.capitalize(getBaseFilename(config().getOutput()));
+    }
+
+    private String getBaseFilename(String filePath) {
+        Path path = Paths.get(filePath);
+        String filename = path.getFileName().toString();
+        int lastDotIndex = filename.lastIndexOf(".");
+        if (lastDotIndex == -1) {
+            return filename;
+        }
+        return filename.substring(0, lastDotIndex);
+    }
+
+    private Collection<Relic> processProvider(Provider provider, Path path) {
         Predicate<Path> pathPredicates = provider.getPathPredicates();
 
-        Path relativized = path.relativize(path);
-        try (Stream<Path> walk = Files.walk(relativized)) {
+        try (Stream<Path> walk = Files.walk(path)) {
             Stream<Path> pathStream = walk.filter(pathPredicates);
             return Optional
                     .ofNullable(provider.provideResources(pathStream))
                     .orElse(new ArrayList<>());
         } catch (Exception e) {
             log.error("Failure processing provider {}", provider, e);
-            throw new RuntimeException(e);
+            return new ArrayList<>();
         }
     }
 }

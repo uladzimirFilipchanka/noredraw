@@ -1,9 +1,11 @@
 package creator.providers.ghaction;
 
+import creator.ProcessingContext;
+import creator.core.annotation.Named;
+import creator.core.model.Relic;
+import creator.core.model.matcher.Matchers;
+import creator.core.model.source.SimpleSource;
 import creator.core.provider.Provider;
-import creator.core.resource.Relic;
-import creator.core.resource.SimpleSource;
-import creator.core.resource.matcher.Matchers;
 import creator.providers.FilePredicates;
 import lombok.extern.slf4j.Slf4j;
 import org.yaml.snakeyaml.Yaml;
@@ -20,6 +22,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Named("GITHUB_ECS_ACTION")
 @Slf4j
 public class GithubECSActionProvider implements Provider {
     @Override
@@ -60,19 +63,17 @@ public class GithubECSActionProvider implements Provider {
                         Map<String, String> with = (Map<String, String>) ecsStep.get("with");
                         if (ecsStep.get("uses").toString().startsWith("aws-actions/amazon-ecs-render-task-definition")) {
                             String pathToTask = with.get("task-definition");
-                            Path normalizedPath = Path.of(pathToTask).normalize();
+                            Path normalizedPath = ProcessingContext.processingContext().getSourcePath().resolve(Path.of(pathToTask)).normalize();
                             if (!Files.exists(normalizedPath)) {
                                 log.warn("Can't locate path to ECS task {} in repo", pathToTask);
                             }
                             String normalizedPathString = normalizedPath.toString();
-//                            builder.definition("pathToTask", normalizedPathString);
-                            builder.matcher(Matchers.equalTo(normalizedPathString)
+                            builder.matcher(Matchers.equalsTo(normalizedPathString)
                                     .relationship("assigns")
                                     .build());
 
                             String containerName = with.get("container-name");
                             builder.name(containerName);
-//                            builder.definition("containerName", containerName);
                             builder.definition("image", with.get("image"));
                         } else if (ecsStep.get("uses").toString().startsWith("aws-actions/amazon-ecs-deploy-task-definition")) {
                             String service = with.get("service");

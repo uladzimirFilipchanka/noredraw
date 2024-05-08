@@ -1,8 +1,9 @@
 package creator.providers.gradle;
 
+import creator.core.annotation.Named;
+import creator.core.model.Relic;
+import creator.core.model.source.SimpleSource;
 import creator.core.provider.Provider;
-import creator.core.resource.Relic;
-import creator.core.resource.SimpleSource;
 import creator.providers.FilePredicates;
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+@Named("GRADLE")
 public class GradleProvider implements Provider {
     @Override
     public Predicate<Path> getPathPredicates() {

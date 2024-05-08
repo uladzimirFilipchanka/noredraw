@@ -8,11 +8,14 @@ import com.structurizr.model.Tags;
 import com.structurizr.view.CustomView;
 import com.structurizr.view.Styles;
 import com.structurizr.view.ViewSet;
-import creator.core.matching.model.Graph;
-import creator.core.resource.*;
-import creator.export.Diagram;
+import creator.core.model.Relic;
+import creator.core.model.graph.Graph;
+import creator.core.model.source.CompositeSource;
+import creator.core.model.source.SimpleSource;
+import creator.core.model.source.Source;
 import creator.export.Exporter;
-import creator.export.TextDiagram;
+import creator.export.model.Diagram;
+import creator.export.model.TextDiagram;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
@@ -24,15 +27,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class StructurizrBasedExporter implements Exporter {
     private final DiagramExporter structurizrExporter;
-    private final static boolean SHOW_SOURCES_AS_ELEMENTS = false;
+    private final static boolean SHOW_SOURCES_AS_ELEMENTS = true;
 
-    public StructurizrBasedExporter(StructurizrExporters structurizrExporter) {
-        this.structurizrExporter = structurizrExporter.getExporter();
+    public StructurizrBasedExporter(DiagramExporter structurizrExporter) {
+        this.structurizrExporter = structurizrExporter;
     }
 
     @Override
-    public Diagram export(Graph<Relic> graph) {
-        Workspace workspace = convertGraph(graph);
+    public Diagram export(Graph<Relic> graph, String title) {
+        Workspace workspace = convertGraph(graph, title);
         Collection<com.structurizr.export.Diagram> diagram = structurizrExporter.export(workspace);
         return diagram.stream()
                 .findFirst()
@@ -45,11 +48,11 @@ public class StructurizrBasedExporter implements Exporter {
         return TextDiagram.builder().definition(definition).build();
     }
 
-    private Workspace convertGraph(Graph<Relic> graph) {
+    private Workspace convertGraph(Graph<Relic> graph, String title) {
         // TODO: pass name of the diagram
         Workspace workspace = new Workspace(UUID.randomUUID().toString(), "Temp workspace");
         Model model = workspace.getModel();
-        Map<Resource, CustomElement> resourceElementMap = new HashMap<>();
+        Map<Relic, CustomElement> resourceElementMap = new HashMap<>();
         for (Relic resource : graph.getVertices()) {
             // TODO: resource should have a name btw
             resourceElementMap.put(resource, createElement(resource, model));
@@ -60,7 +63,7 @@ public class StructurizrBasedExporter implements Exporter {
         }
 
         ViewSet views = workspace.getViews();
-        CustomView contextView = views.createCustomView("viewKey", "viewTitle", "viewDescription");
+        CustomView contextView = views.createCustomView(title, title, title);
         contextView.addAllCustomElements();
 
         Styles styles = views.getConfiguration().getStyles();
@@ -89,11 +92,12 @@ public class StructurizrBasedExporter implements Exporter {
             sourceElement.uses(parent, source.describe());
         } else if (source instanceof CompositeSource compositeSource) {
             compositeSource.getSources().forEach(single -> createAndRelateSource(parent, single, model));
+        } else {
+            log.warn("Could not determine source type {}", source.getClass());
         }
-        log.warn("Could not determine source type {}", source.getClass());
     }
 
-    private static String toDescription(Resource resource) {
+    private static String toDescription(Relic resource) {
         Map<String, String> definitions = resource.getDefinitions();
         if (definitions == null) {
             return "";
