@@ -1,4 +1,4 @@
-rootProject.name = 'arch-diagram-creator'
+rootProject.name = 'noredraw'
 
 include 'core'
 include 'export'

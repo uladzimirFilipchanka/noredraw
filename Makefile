@@ -10,9 +10,9 @@ gradle_build:
 # Rule to build a Docker image with a specific tag
 .PHONY: docker_build
 docker_build:
-	docker build app --tag arch-creator:latest
+	docker build app --tag noredraw:latest
 
 # Rule to remove the Docker image
 .PHONY: docker_clean
 docker_clean:
-	docker rmi arch-creator:latest
+	docker rmi noredraw:latest
