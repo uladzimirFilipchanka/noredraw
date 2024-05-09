@@ -1,5 +1,5 @@
 FROM eclipse-temurin:21
 VOLUME /source
-COPY ./build/libs/app-*.jar /app/app.jar
+COPY ./build/libs/noredraw-*.jar /app/noredraw.jar
 WORKDIR /source
-ENTRYPOINT ["java", "-jar","/app/app.jar"]
+ENTRYPOINT ["java", "-jar","/app/noredraw.jar"]
