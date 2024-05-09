@@ -10,6 +10,8 @@ dependencies {
 }
 
 jar {
+    archivesBaseName = 'noredraw'
+
     manifest {
         attributes(
                 'Main-Class': 'creator.AppRunner'
