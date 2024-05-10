@@ -4,6 +4,6 @@ dependencies {
 
     implementation 'net.sourceforge.plantuml:plantuml:1.2024.4'
 
-    implementation project(":core")
+    implementation project(":noredraw-core")
 }
 

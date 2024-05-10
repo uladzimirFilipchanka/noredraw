@@ -8,6 +8,6 @@ dependencies {
     // AmazonECS provider
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
 
-    implementation project(":core")
+    implementation project(":noredraw-core")
 }
 

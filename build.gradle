@@ -1,12 +1,20 @@
+plugins {
+    id 'org.jreleaser' version '1.11.0'
+    id 'java'
+    id 'maven-publish'
+}
+
 subprojects {
     repositories {
         mavenCentral()
     }
 
     apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    apply plugin: 'org.jreleaser'
 
     version = '0.0.1'
-    group = 'com.example'
+    group = 'io.github.uladzimirFilipchanka'
     sourceCompatibility = '17'
 
     dependencies {
@@ -19,5 +27,84 @@ subprojects {
 
     tasks.named('test') {
         useJUnitPlatform()
+    }
+
+    java {
+//        withJavadocJar()
+        withSourcesJar()
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId = 'io.github.uladzimirFilipchanka'
+                artifactId = project.name
+                version = '0.0.1'
+
+                from components.java
+
+                pom {
+                    name = project.name
+                    url = 'https://github.com/uladzimirFilipchanka/noredraw'
+                    inceptionYear = '2024'
+                    licenses {
+                        license {
+                            name = 'Apache-2.0'
+                            url = 'https://spdx.org/licenses/Apache-2.0.html'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'uladzimirFilipchanka'
+                            name = 'Vladimir Filipchanka'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:https://github.com/uladzimirFilipchanka/noredraw.git'
+                        developerConnection = 'scm:git:ssh://github.com:uladzimirFilipchanka/noredraw.git'
+                        url = 'https://github.com/uladzimirFilipchanka/noredraw.git'
+                    }
+                }
+            }
+        }
+
+        repositories {
+            maven {
+                url = layout.buildDirectory.dir('staging-deploy')
+            }
+        }
+    }
+
+    jreleaser {
+        signing {
+            active = 'ALWAYS'
+            armored = true
+            mode = 'FILE'
+            publicKey = '~/.keys/maven-central-public.pgp'
+//            secreteKey = '~/.keys/maven-central-private.pgp'
+        }
+        deploy {
+            maven {
+                nexus2 {
+                    'maven-central' {
+                        active = 'ALWAYS'
+                        url = 'https://s01.oss.sonatype.org/service/local'
+                        snapshotUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+                        closeRepository = true
+                        releaseRepository = true
+                        stagingRepository('build/staging-deploy')
+                    }
+                }
+                /* Portal Publisher API
+                mavenCentral {
+                    sonatype {
+                        active = 'ALWAYS'
+                        url = 'https://central.sonatype.com/api/v1/publisher'
+                        stagingRepository('target/staging-deploy')
+                    }
+                }
+                */
+            }
+        }
     }
 }

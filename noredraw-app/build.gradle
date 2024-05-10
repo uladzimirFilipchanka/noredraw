@@ -3,10 +3,10 @@ dependencies {
     implementation 'org.jcommander:jcommander:1.83'
     implementation 'ch.qos.logback:logback-classic:1.4.14'
 
-    implementation project(':core')
-    implementation project(':export')
-    implementation project(':loader')
-    implementation project(':providers')
+    implementation project(':noredraw-core')
+    implementation project(':noredraw-export')
+    implementation project(':noredraw-loader')
+    implementation project(':noredraw-providers')
 }
 
 jar {
