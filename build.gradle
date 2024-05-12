@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jreleaser' version '1.11.0'
+    id 'org.jreleaser' version '1.12.0'
     id 'java'
     id 'maven-publish'
 }
@@ -13,7 +13,6 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'org.jreleaser'
 
-    version = '0.0.1'
     group = 'io.github.uladzimirFilipchanka'
     sourceCompatibility = '17'
 
@@ -45,6 +44,7 @@ subprojects {
 
                 pom {
                     name = project.name
+                    description = 'NoReDraw code module'
                     url = 'https://github.com/uladzimirFilipchanka/noredraw'
                     inceptionYear = '2024'
                     licenses {
@@ -75,26 +75,47 @@ subprojects {
         }
     }
 
+    tasks.jreleaserFullRelease.doFirst {
+        mkdir "$project.buildDir/jreleaser"
+    }
+
     jreleaser {
         signing {
+            enabled = true
             active = 'ALWAYS'
             armored = true
             mode = 'FILE'
             publicKey = '~/.keys/maven-central-public.pgp'
-//            secreteKey = '~/.keys/maven-central-private.pgp'
+            secretKey = '~/.keys/maven-central-private.pgp'
+        }
+
+        project{
+            copyright = 'Apache-2.0'
+            description = 'NoReDraw code module'
+        }
+
+        release {
+            github {
+                enabled = false
+            }
         }
         deploy {
+
             maven {
-                nexus2 {
-                    'maven-central' {
+                mavenCentral {
+                    sonatype {
                         active = 'ALWAYS'
-                        url = 'https://s01.oss.sonatype.org/service/local'
-                        snapshotUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
-                        closeRepository = true
-                        releaseRepository = true
+                        url = 'https://central.sonatype.com/api/v1/publisher'
+//                        snapshotUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+//                        closeRepository = true
+//                        releaseRepository = true
                         stagingRepository('build/staging-deploy')
+//                        sign = false
+//                        javadocJar = false
+//                        sign = false
                     }
                 }
+
                 /* Portal Publisher API
                 mavenCentral {
                     sonatype {
