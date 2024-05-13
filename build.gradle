@@ -1,26 +1,24 @@
 plugins {
-    id 'org.jreleaser' version '1.11.0'
     id 'java'
-    id 'maven-publish'
+    id "io.freefair.lombok" version "8.6"
 }
 
-subprojects {
+allprojects {
     repositories {
         mavenCentral()
     }
+}
 
+subprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
-    apply plugin: 'org.jreleaser'
+    apply plugin: 'signing'
+    apply plugin: 'io.freefair.lombok'
 
-    version = '0.0.1'
-    group = 'io.github.uladzimirFilipchanka'
+    group = 'io.github.uladzimirfilipchanka'
     sourceCompatibility = '17'
 
     dependencies {
-        compileOnly 'org.projectlombok:lombok:1.18.22'
-        annotationProcessor 'org.projectlombok:lombok:1.18.22'
-
         implementation 'org.apache.commons:commons-lang3:3.14.0'
         implementation 'org.slf4j:slf4j-api:1.7.25'
     }
@@ -30,14 +28,20 @@ subprojects {
     }
 
     java {
-//        withJavadocJar()
+        withJavadocJar()
         withSourcesJar()
+    }
+
+    javadoc.options.addStringOption('Xdoclint:none', '-quiet')
+
+    artifacts {
+        archives javadocJar, sourcesJar
     }
 
     publishing {
         publications {
             maven(MavenPublication) {
-                groupId = 'io.github.uladzimirFilipchanka'
+                groupId = 'io.github.uladzimirfilipchanka'
                 artifactId = project.name
                 version = '0.0.1'
 
@@ -70,41 +74,25 @@ subprojects {
 
         repositories {
             maven {
-                url = layout.buildDirectory.dir('staging-deploy')
+                url "$project.buildDir/staging"
+//                url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+//                credentials {
+//                    username ossrhUsername
+//                    password ossrhPassword
+//                }
             }
         }
     }
 
-    jreleaser {
-        signing {
-            active = 'ALWAYS'
-            armored = true
-            mode = 'FILE'
-            publicKey = '~/.keys/maven-central-public.pgp'
-//            secreteKey = '~/.keys/maven-central-private.pgp'
-        }
-        deploy {
-            maven {
-                nexus2 {
-                    'maven-central' {
-                        active = 'ALWAYS'
-                        url = 'https://s01.oss.sonatype.org/service/local'
-                        snapshotUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
-                        closeRepository = true
-                        releaseRepository = true
-                        stagingRepository('build/staging-deploy')
-                    }
-                }
-                /* Portal Publisher API
-                mavenCentral {
-                    sonatype {
-                        active = 'ALWAYS'
-                        url = 'https://central.sonatype.com/api/v1/publisher'
-                        stagingRepository('target/staging-deploy')
-                    }
-                }
-                */
-            }
-        }
+    signing {
+        sign configurations.archives
+        sign publishing.publications.maven
+    }
+
+    tasks.publishMavenPublicationToMavenLocal {
+        dependsOn(project.tasks.signArchives)
+    }
+    tasks.publishMavenPublicationToMavenRepository {
+        dependsOn(project.tasks.signArchives)
     }
 }
