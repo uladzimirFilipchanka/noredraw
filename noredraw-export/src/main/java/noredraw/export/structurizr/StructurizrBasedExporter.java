@@ -84,6 +84,9 @@ public class StructurizrBasedExporter implements Exporter {
     }
 
     private void createAndRelateSource(CustomElement parent, Source source, Model model) {
+        if (source == null) {
+            return;
+        }
         if (source instanceof SimpleSource simpleSource) {
             CustomElement sourceElement = model.getCustomElementWithName(simpleSource.getName());
             if (sourceElement == null) {

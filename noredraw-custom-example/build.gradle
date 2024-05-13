@@ -1,0 +1,11 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'io.github.uladzimirfilipchanka:noredraw-core:0.0.1'
+}

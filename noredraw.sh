@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 JAR_URL="https://github.com/uladzimirFilipchanka/noredraw/releases/latest/download/noredraw.jar"
 JAR_NAME="noredraw.jar"
 DOWNLOAD_DIR="."
@@ -18,4 +20,4 @@ if [[ ! -f "$DOWNLOAD_DIR/$JAR_NAME" ]]; then
     fi
 fi
 
-java -jar "$DOWNLOAD_DIR/$JAR_NAME" "$@"
+java -cp "$DOWNLOAD_DIR/$JAR_NAME":libs/* noredraw.AppRunner "$@"
