@@ -5,6 +5,7 @@ set -e
 JAR_URL="https://github.com/uladzimirFilipchanka/noredraw/releases/latest/download/noredraw.jar"
 JAR_NAME="noredraw.jar"
 DOWNLOAD_DIR="."
+CUSTOM_DIR="./custom"
 
 mkdir -p "$DOWNLOAD_DIR"
 
@@ -20,4 +21,17 @@ if [[ ! -f "$DOWNLOAD_DIR/$JAR_NAME" ]]; then
     fi
 fi
 
-java -cp "$DOWNLOAD_DIR/$JAR_NAME":libs/* noredraw.AppRunner "$@"
+CLASSPATH="$DOWNLOAD_DIR/$JAR_NAME"
+
+# Check if the ./custom directory exists
+if [[ -d "$CUSTOM_DIR" ]]; then
+    # Find all JAR and ZIP files under the ./custom folder
+    CUSTOM_FILES=$(find "$CUSTOM_DIR" \( -name "*.jar" -o -name "*.zip" \) -type f)
+
+    for FILE in $CUSTOM_FILES; do
+        CLASSPATH+=":$FILE"
+    done
+fi
+
+# Run the Java application with the constructed classpath
+java -cp "$CLASSPATH" noredraw.AppRunner "$@"
