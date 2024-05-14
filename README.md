@@ -2,7 +2,7 @@
 
 <h1>No Redraw</h1>
 NoReDraw is a handy command line java-based tool that converts your source code into diagram<br/><br/>
-Have you ever wonder of adding a nice diagram for your architecture? Did you ever have time for that? Are you up maintaining the diagram till the end of all days?
+Have you ever wondered about adding a nice diagram for your architecture? Have you ever had time for that? Are you up for maintaining the diagram for eternity?
 
 No worries, I've got your back. Just run _NoReDraw_ tool against your repo and it will generate diagram of desired type. All local, no internet, no fancy AIs. 
 
