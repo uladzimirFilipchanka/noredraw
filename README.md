@@ -17,8 +17,11 @@ wget https://github.com/uladzimirFilipchanka/noredraw/raw/main/noredraw.sh && ch
 
 Now you can insert generated diagram into your comapny's wiki and it will get rendered as an image ([GitHub](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/), [Confluence](https://marketplace.atlassian.com/apps/1222572/mermaid-charts-diagrams-for-confluence?tab=overview&hosting=cloud) and many more support it). 
 
-Example of the diagram:
+![noredraw-sample diagram](https://github.com/uladzimirFilipchanka/noredraw-sample/blob/main/diagram.png?raw=true)
 
+<details>
+  <summary>Example of the embedded MERMAID diagram</summary>
+  
 ```mermaid
 graph TB
   linkStyle default fill:#ffffff
@@ -57,6 +60,8 @@ graph TB
     2-. "<div>prepares</div><div style='font-size: 70%'></div>" .->7
   end
 ```
+  
+</details>
 
 Alternatively NoReDraw can generate good old PNG for you by specifying `--export PNG` (internet connection required)
 
