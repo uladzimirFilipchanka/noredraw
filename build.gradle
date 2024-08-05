@@ -43,7 +43,7 @@ subprojects {
             maven(MavenPublication) {
                 groupId = 'io.github.uladzimirfilipchanka'
                 artifactId = project.name
-                version = '0.0.1'
+                version = '0.0.2'
 
                 from components.java
 
@@ -51,6 +51,7 @@ subprojects {
                     name = project.name
                     url = 'https://github.com/uladzimirFilipchanka/noredraw'
                     inceptionYear = '2024'
+                    description = project.description
                     licenses {
                         license {
                             name = 'Apache-2.0'
