@@ -26,35 +26,35 @@ graph TB
   subgraph diagram ["My-shiny-diagram"]
     style diagram fill:#ffffff,stroke:#ffffff
 
-    1["<div style='font-weight: bold'>Dockerfile\n[Dockerfile]</div><div style='font-size: 70%; margin-top: 0px'></div><div style='font-size: 80%; margin-top:10px'>baseImage:eclipse-temurin:17<br />entrypoint:java -jar<br />/app/arch-diagram-sample.jar<br />path:Dockerfile port:80</div>"]
-    style 1 fill:#1168bd,stroke:#0b4884,color:#ffffff
-    10["<div style='font-weight: bold'>app-first-service\n[AmazonECS]</div><div style='font-size: 70%; margin-top: 0px'></div>"]
-    style 10 fill:#1168bd,stroke:#0b4884,color:#ffffff
-    11["<div style='font-weight: bold'>Terraform</div><div style='font-size: 70%; margin-top: 0px'></div>"]
-    style 11 fill:#1168bd,stroke:#0b4884,color:#ffffff
-    13["<div style='font-weight: bold'>arch-diagram-sample\n[Jar]</div><div style='font-size: 70%; margin-top: 0px'></div><div style='font-size: 80%; margin-top:10px'>targetPath:build/libs/arch-diagram-sample*.jar</div>"]
-    style 13 fill:#1168bd,stroke:#0b4884,color:#ffffff
-    14["<div style='font-weight: bold'>Gradle</div><div style='font-size: 70%; margin-top: 0px'></div>"]
-    style 14 fill:#1168bd,stroke:#0b4884,color:#ffffff
-    2["<div style='font-weight: bold'>FileSystem</div><div style='font-size: 70%; margin-top: 0px'></div>"]
-    style 2 fill:#1168bd,stroke:#0b4884,color:#ffffff
-    4["<div style='font-weight: bold'>app-first-task\n[AmazonECSTaskDeployment]</div><div style='font-size: 70%; margin-top: 0px'></div><div style='font-size: 80%; margin-top:10px'>cluster:app-cluster<br />family:app-first-task<br />image:venom27/arch-diagram-sample:latest<br />service:app-first-service</div>"]
-    style 4 fill:#1168bd,stroke:#0b4884,color:#ffffff
-    5["<div style='font-weight: bold'>Github Actions</div><div style='font-size: 70%; margin-top: 0px'></div>"]
-    style 5 fill:#1168bd,stroke:#0b4884,color:#ffffff
-    8["<div style='font-weight: bold'>venom27/arch-diagram-sample:latest\n[DockerImage]</div><div style='font-size: 70%; margin-top: 0px'></div><div style='font-size: 80%; margin-top:10px'>path:Dockerfile<br />tag0:venom27/arch-diagram-sample:latest<br />tag1:venom27/arch-diagram-sample:${{env.RELEASE_VERSION}}</div>"]
-    style 8 fill:#1168bd,stroke:#0b4884,color:#ffffff
+    1("<div style='font-weight: bold'>venom27/arch-diagram-sample:latest\n[DockerImage]</div><div style='font-size: 70%; margin-top: 0px'></div><div style='font-size: 80%; margin-top:10px'>path:Dockerfile<br />tag0:venom27/arch-diagram-sample:latest<br />tag1:venom27/arch-diagram-sample:${{env.RELEASE_VERSION}}</div>")
+    style 1 fill:#a5d8ff,stroke:#000000,color:#000000
+    11("<div style='font-weight: bold'>Dockerfile\n[Dockerfile]</div><div style='font-size: 70%; margin-top: 0px'></div><div style='font-size: 80%; margin-top:10px'>baseImage:eclipse-temurin:17<br />entrypoint:java -jar<br />/app/arch-diagram-sample.jar<br />path:Dockerfile port:80</div>")
+    style 11 fill:#a5d8ff,stroke:#000000,color:#000000
+    13("<div style='font-weight: bold'>arch-diagram-sample\n[Jar]</div><div style='font-size: 70%; margin-top: 0px'></div><div style='font-size: 80%; margin-top:10px'>targetPath:build/libs/arch-diagram-sample*.jar</div>")
+    style 13 fill:#a5d8ff,stroke:#000000,color:#000000
+    14("<div style='font-weight: bold'>Gradle</div><div style='font-size: 70%; margin-top: 0px'></div>")
+    style 14 fill:#ffc9c9,stroke:#000000,color:#000000
+    2("<div style='font-weight: bold'>Github Actions</div><div style='font-size: 70%; margin-top: 0px'></div>")
+    style 2 fill:#ffc9c9,stroke:#000000,color:#000000
+    4("<div style='font-weight: bold'>app-first-service\n[AmazonECS]</div><div style='font-size: 70%; margin-top: 0px'></div>")
+    style 4 fill:#a5d8ff,stroke:#000000,color:#000000
+    5("<div style='font-weight: bold'>Terraform</div><div style='font-size: 70%; margin-top: 0px'></div>")
+    style 5 fill:#ffc9c9,stroke:#000000,color:#000000
+    7("<div style='font-weight: bold'>app-first-task\n[AmazonECSTaskDeployment]</div><div style='font-size: 70%; margin-top: 0px'></div><div style='font-size: 80%; margin-top:10px'>cluster:app-cluster<br />family:app-first-task<br />image:venom27/arch-diagram-sample:latest<br />service:app-first-service</div>")
+    style 7 fill:#a5d8ff,stroke:#000000,color:#000000
+    9("<div style='font-weight: bold'>FileSystem</div><div style='font-size: 70%; margin-top: 0px'></div>")
+    style 9 fill:#ffc9c9,stroke:#000000,color:#000000
 
-    11-. "<div>provisions</div><div style='font-size: 70%'></div>" .->10
+    9-. "<div>defines</div><div style='font-size: 70%'></div>" .->7
+    9-. "<div>defines</div><div style='font-size: 70%'></div>" .->11
     14-. "<div>builds</div><div style='font-size: 70%'></div>" .->13
-    1-. "<div>containerize</div><div style='font-size: 70%'></div>" .->13
-    4-. "<div>assigns</div><div style='font-size: 70%'></div>" .->8
-    8-. "<div>creates</div><div style='font-size: 70%'></div>" .->1
-    10-. "<div>deploys</div><div style='font-size: 70%'></div>" .->4
-    2-. "<div>defines</div><div style='font-size: 70%'></div>" .->1
-    5-. "<div>prepares</div><div style='font-size: 70%'></div>" .->4
-    2-. "<div>defines</div><div style='font-size: 70%'></div>" .->4
-    5-. "<div>builds</div><div style='font-size: 70%'></div>" .->8
+    1-. "<div>creates</div><div style='font-size: 70%'></div>" .->11
+    4-. "<div>deploys</div><div style='font-size: 70%'></div>" .->7
+    7-. "<div>assigns</div><div style='font-size: 70%'></div>" .->1
+    11-. "<div>containerize</div><div style='font-size: 70%'></div>" .->13
+    2-. "<div>builds</div><div style='font-size: 70%'></div>" .->1
+    5-. "<div>provisions</div><div style='font-size: 70%'></div>" .->4
+    2-. "<div>prepares</div><div style='font-size: 70%'></div>" .->7
   end
 ```
 
