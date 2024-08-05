@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 public class CliArgs {
-    @Parameter(names = {"-s", "--source"}, description = "Path to the source code")
+    @Parameter(names = {"-s", "--source"}, description = "Path to the source code", required = true)
     private String source = "/source";
 
     @Parameter(names = {"-m", "--merge"}, converter = MergeStrategyConverter.class, description = "Merge strategy to use")
