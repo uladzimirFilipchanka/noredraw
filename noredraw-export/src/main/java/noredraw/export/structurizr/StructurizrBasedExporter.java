@@ -5,9 +5,8 @@ import com.structurizr.export.DiagramExporter;
 import com.structurizr.model.CustomElement;
 import com.structurizr.model.Model;
 import com.structurizr.model.Tags;
-import com.structurizr.view.CustomView;
-import com.structurizr.view.Styles;
-import com.structurizr.view.ViewSet;
+import com.structurizr.view.*;
+import lombok.extern.slf4j.Slf4j;
 import noredraw.core.model.Relic;
 import noredraw.core.model.graph.Graph;
 import noredraw.core.model.source.CompositeSource;
@@ -16,7 +15,6 @@ import noredraw.core.model.source.Source;
 import noredraw.export.Exporter;
 import noredraw.export.model.Diagram;
 import noredraw.export.model.TextDiagram;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class StructurizrBasedExporter implements Exporter {
+    public static final String SOURCE_TAG = "SOURCE";
     private final DiagramExporter structurizrExporter;
     private final static boolean SHOW_SOURCES_AS_ELEMENTS = true;
 
@@ -65,9 +64,22 @@ public class StructurizrBasedExporter implements Exporter {
         ViewSet views = workspace.getViews();
         CustomView contextView = views.createCustomView(title, title, title);
         contextView.addAllCustomElements();
+        contextView.addDefaultElements();
 
-        Styles styles = views.getConfiguration().getStyles();
-        styles.addElementStyle(Tags.ELEMENT).background("#1168bd").color("#ffffff");
+        Configuration configuration = views.getConfiguration();
+        Styles styles = configuration.getStyles();
+        styles.addElementStyle(Tags.ELEMENT)
+                .background("#a5d8ff")
+                .stroke("#000000")
+                .color("#000000")
+                .shape(Shape.RoundedBox);
+        styles.addElementStyle(SOURCE_TAG)
+                .background("#ffc9c9")
+                .stroke("#000000")
+                .color("#000000")
+                .shape(Shape.RoundedBox);
+        styles.addRelationshipStyle(Tags.RELATIONSHIP)
+                .color("#000000");
 
         return workspace;
     }
@@ -91,6 +103,7 @@ public class StructurizrBasedExporter implements Exporter {
             CustomElement sourceElement = model.getCustomElementWithName(simpleSource.getName());
             if (sourceElement == null) {
                 sourceElement = model.addCustomElement(simpleSource.getName());
+                sourceElement.addTags(SOURCE_TAG);
             }
             sourceElement.uses(parent, source.describe());
         } else if (source instanceof CompositeSource compositeSource) {

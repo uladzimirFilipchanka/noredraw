@@ -2,7 +2,6 @@ package noredraw.export.structurizr;
 
 import com.structurizr.export.dot.DOTExporter;
 import com.structurizr.export.mermaid.MermaidDiagramExporter;
-import com.structurizr.export.plantuml.StructurizrPlantUMLExporter;
 import noredraw.core.annotation.Named;
 
 public class StructurizrExporters {
@@ -10,7 +9,7 @@ public class StructurizrExporters {
     @Named("PLANT_UML")
     public static class PlantUmlStructurizrExporter extends StructurizrBasedExporter {
         public PlantUmlStructurizrExporter() {
-            super(new StructurizrPlantUMLExporter());
+            super(new CustomStructurizrPlantUMLExporter());
         }
     }
 
